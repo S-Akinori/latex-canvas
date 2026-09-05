@@ -17,7 +17,15 @@ function refreshLibrary(records, selected = '') {
   loadButton.disabled = !savedSelect.value;
 }
 function captureFormula() {
-  return { tex: input.value, align: alignEquals, transparent: transparentToggle.checked, scale: scaleSelect.value, name: nameField.value };
+  return {
+    tex: input.value,
+    align: alignEquals,
+    transparent: transparentToggle.checked,
+    scale: scaleSelect.value,
+    name: nameField.value,
+    selectionStart: input.selectionStart,
+    selectionEnd: input.selectionEnd
+  };
 }
 function restoreFormula(record) {
   input.value = record.tex;
@@ -28,6 +36,18 @@ function restoreFormula(record) {
   alignButton.title = alignEquals ? '等号揃えを解除する' : '複数行の数式を最初の等号で揃える';
   transparentToggle.checked = record.transparent === true;
   scaleSelect.value = ['2', '3', '4'].includes(record.scale) ? record.scale : '3';
+  renderMath();
+  const start = Number.isInteger(record.selectionStart) ? record.selectionStart : input.value.length;
+  const end = Number.isInteger(record.selectionEnd) ? record.selectionEnd : start;
+  input.focus();
+  input.setSelectionRange(start, end);
+}
+function insertFormula(record) {
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? start;
+  input.setRangeText(record.tex, start, end, 'end');
+  nameField.value = record.name;
+  input.focus();
   renderMath();
 }
 try { refreshLibrary(readLibrary()); } catch { libraryStatus.textContent = '保存データを読み込めません。ブラウザの保存設定を確認してください。'; }
@@ -49,9 +69,9 @@ loadButton.addEventListener('click', () => {
     const record = readLibrary().find(r => r.id === savedSelect.value);
     if (!record) { libraryStatus.textContent = '数式が見つかりません。ページを更新してください。'; return; }
     beforeLoad = captureFormula();
-    restoreFormula(record);
+    insertFormula(record);
     undoButton.hidden = false;
-    libraryStatus.textContent = '「' + record.name + '」を呼び出しました。';
+    libraryStatus.textContent = '「' + record.name + '」をカーソル位置に挿入しました。';
   } catch { libraryStatus.textContent = '保存データを読み込めませんでした。'; }
 });
 undoButton.addEventListener('click', () => {
@@ -59,5 +79,5 @@ undoButton.addEventListener('click', () => {
   restoreFormula(beforeLoad);
   beforeLoad = null;
   undoButton.hidden = true;
-  libraryStatus.textContent = '呼び出す前の入力に戻しました。';
+  libraryStatus.textContent = '挿入前の入力に戻しました。';
 });
