@@ -103,6 +103,7 @@ for (const [title, url] of [
 
 for (const group of referenceGroups) {
   const details = document.createElement('details');
+  details.dataset.categoryName = group.name;
   details.className = 'reference-category';
   const summary = document.createElement('summary');
   summary.textContent = `${group.name} · ${group.entries.length}`;
@@ -117,6 +118,7 @@ for (const group of referenceGroups) {
   const body = table.createTBody();
   for (const [name, tex, note] of group.entries) {
     const row = body.insertRow();
+    row.dataset.searchText = [group.name, name, tex, note || ''].join(' ').normalize('NFKC').toLowerCase();
     const cell = row.insertCell();
     const label = document.createElement('span');
     label.textContent = name;
@@ -158,3 +160,30 @@ for (const group of referenceGroups) {
   });
   referenceRoot.append(details);
 }
+
+const searchField = document.querySelector('#referenceSearch');
+const searchStatus = document.querySelector('#searchStatus');
+let previousOpen = null;
+function filterReference() {
+  const words = searchField.value.normalize('NFKC').toLowerCase().trim().split(/\s+/).filter(Boolean);
+  const categories = [...referenceRoot.querySelectorAll('.reference-category')];
+  if (words.length && !previousOpen) previousOpen = categories.map(d => d.open);
+  let total = 0;
+  categories.forEach((category, index) => {
+    let matches = 0;
+    const rows = category.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      row.hidden = !words.every(word => row.dataset.searchText.includes(word));
+      if (!row.hidden) matches++;
+    });
+    total += matches;
+    category.hidden = matches === 0;
+    category.querySelector('summary').textContent = `${category.dataset.categoryName} · ${matches}`;
+    if (words.length) category.open = matches > 0;
+    else if (previousOpen) category.open = previousOpen[index];
+  });
+  if (!words.length) previousOpen = null;
+  searchStatus.textContent = total ? `${total}件${words.length ? 'が見つかりました' : 'の項目'}` : '一致する項目はありません。別の言葉で検索してください。';
+}
+searchField.addEventListener('input', filterReference);
+filterReference();

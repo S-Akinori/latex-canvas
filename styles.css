@@ -174,6 +174,16 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .reference-category code { white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.7 'DM Mono', monospace; }
 .reference-math { background: var(--paper); color: #1f211e; font-size: 14px; overflow: auto; }
 .formula-condition { color: var(--muted); font-size: 12px; line-height: 1.7; margin: 10px 0 0; overflow-wrap: anywhere; }
+[hidden] { display: none !important; }
+.formula-library { padding: 20px; border-top: 1px solid var(--line); }
+.formula-library label, .reference-search label { display: block; font-size: 12px; margin-bottom: 8px; color: var(--ink); }
+.library-controls { display: flex; gap: 8px; margin-bottom: 16px; }
+.library-controls input, .library-controls select { min-width: 0; flex: 1; width: 100%; }
+.library-controls input, .reference-search input { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 12px; font: inherit; font-size: 13px; }
+.library-controls input:focus-visible, .reference-search input:focus-visible { outline: 2px solid var(--accent); }
+.formula-library p, .reference-search p { color: var(--muted); font-size: 12px; line-height: 1.7; }
+.reference-search { margin-bottom: 30px; }
+.reference-search input { width: 100%; }
 .reference-math mjx-container { margin: 0 !important; max-width: 100%; }
 .reference-math svg { max-width: 100%; height: auto; }
 .reference-math mjx-assistive-mml { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip-path: inset(50%) !important; }

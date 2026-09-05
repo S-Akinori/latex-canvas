@@ -26,6 +26,7 @@
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     <script defer src="app.js"></script>
+    <script defer src="library.js"></script>
     <script defer src="physics.js"></script>
     <script defer src="reference.js"></script>
   </head>
@@ -70,6 +71,15 @@ e^{i\pi} + 1 = 0</textarea>
             <p id="inputHint">Enterでそのまま数式を改行できます</p>
             <span id="charCount">0文字</span>
           </div>
+          <section class="formula-library" aria-label="保存した数式">
+            <label for="formulaName">数式の名前</label>
+            <div class="library-controls"><input id="formulaName" maxlength="80" placeholder="例：運動方程式" /><button id="saveFormula" class="secondary-button" type="button">新しく保存</button></div>
+            <label for="savedFormula">保存した数式</label>
+            <div class="library-controls"><select id="savedFormula"><option value="">保存した数式はありません</option></select><button id="loadFormula" class="secondary-button" type="button" disabled>呼び出す</button></div>
+            <button id="undoLoad" class="text-button" type="button" hidden>呼び出す前の入力に戻す</button>
+            <p>このブラウザに保存します。別の端末とは共有されません。ブラウザのサイトデータを削除すると消えます。</p>
+            <p id="libraryStatus" role="status"></p>
+          </section>
         </div>
 
         <div class="panel preview-panel">
@@ -118,6 +128,7 @@ e^{i\pi} + 1 = 0</textarea>
             <span class="toggle-label"><span class="toggle-open">早見表を開く</span><span class="toggle-close">早見表を閉じる</span><i aria-hidden="true"></i></span>
           </summary>
           <div class="cheatsheet-content">
+          <div class="reference-search"><label for="referenceSearch">チートシートを検索</label><input type="search" id="referenceSearch" placeholder="例：運動エネルギー、frac、理想気体" /><p id="searchStatus" role="status"></p></div>
           <div class="cheatsheet-intro">
           <p class="eyebrow">COPY &amp; PASTE</p>
           <h2>クリックでコピー</h2>
