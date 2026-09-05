@@ -173,6 +173,7 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .reference-category button:hover code { color: var(--ink); }
 .reference-category code { white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.7 'DM Mono', monospace; }
 .reference-math { background: var(--paper); color: #1f211e; font-size: 14px; overflow: auto; }
+.formula-condition { color: var(--muted); font-size: 12px; line-height: 1.7; margin: 10px 0 0; overflow-wrap: anywhere; }
 .reference-math mjx-container { margin: 0 !important; max-width: 100%; }
 .reference-math svg { max-width: 100%; height: auto; }
 .reference-math mjx-assistive-mml { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip-path: inset(50%) !important; }

@@ -78,6 +78,7 @@ addGroup('色・背景', [
 ]);
 
 const referenceRoot = document.querySelector('.syntax-groups');
+referenceGroups.unshift(...physicsGroups);
 referenceRoot.replaceChildren();
 referenceRoot.classList.add('reference-groups');
 document.querySelector('.cheatsheet-content').classList.add('reference-content');
@@ -86,6 +87,19 @@ const referenceSource = document.createElement('a');
 referenceSource.href = 'https://www.folklore.place/webtools/latex/previewer/';
 referenceSource.textContent = '参考：Folklore の LaTeX チートシート';
 document.querySelector('.cheatsheet-intro').append(referenceSource);
+const physicsNote = document.createElement('p');
+physicsNote.textContent = '高校物理：物理基礎・物理の主要公式と頻出の派生式を収録。発展事項は注記しています。記号は各式の注記に従い、SI単位を基本とします。すべての問題の変形式を列挙したものではありません。';
+document.querySelector('.cheatsheet-intro').append(physicsNote);
+for (const [title, url] of [
+  ['物理の参考：高校物理をあきらめる前に', 'https://www.yukimura-physics.com/fomula'],
+  ['物理の参考：わかりやすい高校物理の部屋', 'https://wakariyasui.sakura.ne.jp/a/kousiki.html']
+]) {
+  const link = document.createElement('a');
+  link.href = url;
+  link.textContent = title;
+  link.style.display = 'block';
+  document.querySelector('.cheatsheet-intro').append(link);
+}
 
 for (const group of referenceGroups) {
   const details = document.createElement('details');
@@ -101,7 +115,7 @@ for (const group of referenceGroups) {
     head.append(th);
   }
   const body = table.createTBody();
-  for (const [name, tex] of group.entries) {
+  for (const [name, tex, note] of group.entries) {
     const row = body.insertRow();
     const cell = row.insertCell();
     const label = document.createElement('span');
@@ -114,6 +128,12 @@ for (const group of referenceGroups) {
     code.textContent = tex;
     button.append(code);
     cell.append(label, button);
+    if (note) {
+      const condition = document.createElement('p');
+      condition.className = 'formula-condition';
+      condition.textContent = note;
+      cell.append(condition);
+    }
     const result = row.insertCell();
     result.className = 'reference-math';
     result.dataset.previewTex = tex;
