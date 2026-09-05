@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="LaTeX数式をリアルタイムにプレビューし、PNG・SVGで保存できるツール" />
+    <meta name="theme-color" content="#171816" />
+    <title>LatexCanvas — LaTeX数式を画像に</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2215%22 fill=%22%23171816%22/><path d=%22M42 16H21l14 16-14 16h21%22 fill=%22none%22 stroke=%22%23f17c53%22 stroke-width=%226%22 stroke-linejoin=%22round%22/></svg>" />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      window.MathJax = {
+        loader: { load: ['input/tex', 'output/svg'] },
+        tex: {
+          packages: { '[+]': ['ams'] },
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: { fontCache: 'local' },
+        startup: { typeset: false }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script defer src="app.js"></script>
+    <script defer src="reference.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#editor">エディターへ移動</a>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="LatexCanvas ホーム">
+        <span class="brand-mark" aria-hidden="true">Σ</span>
+        <span class="brand-name">LatexCanvas<small>LATEX TO IMAGE</small></span>
+      </a>
+      <div class="live-status"><span></span>リアルタイム変換</div>
+    </header>
+
+    <main class="workspace">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">LATEX → IMAGE</p>
+        <h1 id="page-title">数式を、<br />そのまま画像に。</h1>
+        <p class="intro-copy">LaTeXを書くだけ。複数行の数式も、きれいなPNG・SVGとしてすぐ保存できます。</p>
+        <div class="shortcut"><kbd>Ctrl</kbd><span>+</span><kbd>Enter</kbd><span>でPNG保存</span></div>
+      </section>
+
+      <section class="editor-shell" id="editor" aria-label="数式エディター">
+        <div class="panel input-panel">
+          <div class="panel-head">
+            <div>
+              <span class="step">01</span>
+              <h2>LaTeX</h2>
+            </div>
+            <div class="editor-actions">
+              <button class="align-button" id="alignButton" type="button" aria-pressed="true" title="複数行の数式を最初の等号で揃える">
+                <span class="align-icon" aria-hidden="true"><i></i><b>=</b><i></i></span>
+                <span id="alignButtonLabel">＝揃え ON</span>
+              </button>
+              <button class="text-button" id="sampleButton" type="button">サンプルに戻す</button>
+            </div>
+          </div>
+          <label class="sr-only" for="latexInput">LaTeXを入力</label>
+          <textarea id="latexInput" spellcheck="false" aria-describedby="inputHint">E = mc^2
+F = ma
+e^{i\pi} + 1 = 0</textarea>
+          <div class="input-foot">
+            <p id="inputHint">Enterでそのまま数式を改行できます</p>
+            <span id="charCount">0文字</span>
+          </div>
+        </div>
+
+        <div class="panel preview-panel">
+          <div class="panel-head">
+            <div>
+              <span class="step">02</span>
+              <h2>Preview</h2>
+            </div>
+            <div class="scale-control">
+              <label for="scaleSelect">解像度</label>
+              <select id="scaleSelect">
+                <option value="2">2×</option>
+                <option value="3" selected>3×</option>
+                <option value="4">4×</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="preview-stage" id="previewStage">
+            <div class="grid-paper" aria-hidden="true"></div>
+            <div id="mathPreview" aria-live="polite"><span class="loading-line"></span></div>
+            <p class="error-message" id="errorMessage" role="alert"></p>
+          </div>
+
+          <div class="export-bar">
+            <label class="toggle-row">
+              <input type="checkbox" id="transparentToggle" />
+              <span class="toggle"><span></span></span>
+              背景を透明にする
+            </label>
+            <div class="download-actions">
+              <button class="secondary-button" id="svgButton" type="button">SVG</button>
+              <button class="primary-button" id="pngButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14" /></svg>
+                PNGを保存
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cheatsheet-section" aria-labelledby="cheatsheet-title">
+        <details class="cheatsheet">
+          <summary class="cheatsheet-toggle">
+            <span><small>QUICK REFERENCE</small><strong id="cheatsheet-title">LaTeX 構文早見表</strong></span>
+            <span class="toggle-label"><span class="toggle-open">早見表を開く</span><span class="toggle-close">早見表を閉じる</span><i aria-hidden="true"></i></span>
+          </summary>
+          <div class="cheatsheet-content">
+          <div class="cheatsheet-intro">
+          <p class="eyebrow">COPY &amp; PASTE</p>
+          <h2>クリックでコピー</h2>
+          <p>コードを選ぶとクリップボードへコピーします。入力欄に貼り付けて、そのまま試せます。</p>
+          <span class="copy-status" id="copyStatus" aria-live="polite"></span>
+        </div>
+
+        <div class="syntax-groups">
+          <article class="syntax-group">
+            <header><span>01</span><h3>基本</h3></header>
+            <div class="syntax-list">
+              <button class="syntax-row" type="button" data-latex="x^{2}"><span>上付き</span><code>x^{2}</code></button>
+              <button class="syntax-row" type="button" data-latex="x_{i}"><span>下付き</span><code>x_{i}</code></button>
+              <button class="syntax-row" type="button" data-latex="\frac{a}{b}"><span>分数</span><code>\frac{a}{b}</code></button>
+              <button class="syntax-row" type="button" data-latex="\sqrt{x}"><span>平方根</span><code>\sqrt{x}</code></button>
+              <button class="syntax-row" type="button" data-latex="\sqrt[n]{x}"><span>n乗根</span><code>\sqrt[n]{x}</code></button>
+            </div>
+          </article>
+
+          <article class="syntax-group">
+            <header><span>02</span><h3>演算・関係</h3></header>
+            <div class="syntax-list">
+              <button class="syntax-row" type="button" data-latex="\times \div \pm"><span>演算記号</span><code>\times \div \pm</code></button>
+              <button class="syntax-row" type="button" data-latex="\neq \leq \geq"><span>比較</span><code>\neq \leq \geq</code></button>
+              <button class="syntax-row" type="button" data-latex="\approx \equiv"><span>近似・合同</span><code>\approx \equiv</code></button>
+              <button class="syntax-row" type="button" data-latex="\in \notin \subset"><span>集合関係</span><code>\in \notin \subset</code></button>
+            </div>
+          </article>
+
+          <article class="syntax-group syntax-group-wide">
+            <header><span>03</span><h3>大型演算子</h3></header>
+            <div class="syntax-list syntax-list-grid">
+              <button class="syntax-row" type="button" data-latex="\sum_{i=1}^{n} x_i"><span>総和</span><code>\sum_{i=1}^{n} x_i</code></button>
+              <button class="syntax-row" type="button" data-latex="\prod_{i=1}^{n} x_i"><span>総乗</span><code>\prod_{i=1}^{n} x_i</code></button>
+              <button class="syntax-row" type="button" data-latex="\int_{a}^{b} f(x)\,dx"><span>定積分</span><code>\int_{a}^{b} f(x)\,dx</code></button>
+              <button class="syntax-row" type="button" data-latex="\lim_{x \to 0} f(x)"><span>極限</span><code>\lim_{x \to 0} f(x)</code></button>
+            </div>
+          </article>
+
+          <article class="syntax-group">
+            <header><span>04</span><h3>ギリシャ文字</h3></header>
+            <div class="syntax-list">
+              <button class="syntax-row" type="button" data-latex="\alpha \beta \gamma"><span>小文字</span><code>\alpha \beta \gamma</code></button>
+              <button class="syntax-row" type="button" data-latex="\theta \lambda \mu"><span>小文字</span><code>\theta \lambda \mu</code></button>
+              <button class="syntax-row" type="button" data-latex="\pi \sigma \omega"><span>小文字</span><code>\pi \sigma \omega</code></button>
+              <button class="syntax-row" type="button" data-latex="\Delta \Sigma \Omega"><span>大文字</span><code>\Delta \Sigma \Omega</code></button>
+            </div>
+          </article>
+
+          <article class="syntax-group">
+            <header><span>05</span><h3>装飾・括弧</h3></header>
+            <div class="syntax-list">
+              <button class="syntax-row" type="button" data-latex="\vec{v} \hat{x} \bar{x}"><span>アクセント</span><code>\vec{v} \hat{x} \bar{x}</code></button>
+              <button class="syntax-row" type="button" data-latex="\overline{AB}"><span>上線</span><code>\overline{AB}</code></button>
+              <button class="syntax-row" type="button" data-latex="\left( \frac{a}{b} \right)"><span>自動括弧</span><code>\left( \frac{a}{b} \right)</code></button>
+              <button class="syntax-row" type="button" data-latex="\left\{ x \in \mathbb{R} \right\}"><span>集合</span><code>\left\{ x \in \mathbb{R} \right\}</code></button>
+            </div>
+          </article>
+
+          <article class="syntax-group syntax-group-wide">
+            <header><span>06</span><h3>複数行・行列</h3></header>
+            <div class="syntax-list syntax-list-grid">
+              <button class="syntax-row" type="button" data-latex="x = 1&#10;y = 2"><span>このツールでの改行</span><code>x = 1 ↵ y = 2</code></button>
+              <button class="syntax-row" type="button" data-latex="\begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix}"><span>丸括弧の行列</span><code>\begin{pmatrix} …</code></button>
+              <button class="syntax-row" type="button" data-latex="\begin{cases} x &amp; x \geq 0 \\ -x &amp; x &lt; 0 \end{cases}"><span>場合分け</span><code>\begin{cases} …</code></button>
+              <button class="syntax-row" type="button" data-latex="\begin{vmatrix} a &amp; b \\ c &amp; d \end{vmatrix}"><span>行列式</span><code>\begin{vmatrix} …</code></button>
+            </div>
+          </article>
+          </div>
+          </div>
+        </details>
+      </section>
+    </main>
+
+    <footer><span>入力内容はブラウザ内で処理されます</span><span>v1.0</span></footer>
+  </body>
+</html>
